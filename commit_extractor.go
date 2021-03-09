@@ -2,6 +2,7 @@ package chglog
 
 import (
 	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -45,6 +46,7 @@ func (e *commitExtractor) Extract(commits []*Commit) ([]*CommitGroup, []*Commit,
 
 	e.sortCommitGroups(commitGroups)
 	e.sortNoteGroups(noteGroups)
+	e.sortMergeCommits(mergeCommits)
 
 	return commitGroups, mergeCommits, revertCommits, noteGroups
 }
@@ -202,4 +204,13 @@ func (e *commitExtractor) sortNoteGroups(groups []*NoteGroup) {
 			return strings.ToLower(group.Notes[i].Title) < strings.ToLower(group.Notes[j].Title)
 		})
 	}
+}
+
+func (e *commitExtractor) sortMergeCommits(commits []*Commit) {
+	// merge.ref
+	sort.Slice(commits, func(i, j int) bool {
+		from, _ := strconv.ParseInt(commits[i].Merge.Ref, 10, 64)
+		to, _ := strconv.ParseInt(commits[j].Merge.Ref, 10, 64)
+		return from > to
+	})
 }
