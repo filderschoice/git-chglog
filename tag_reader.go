@@ -124,4 +124,8 @@ func (*tagReader) sortTags(tags []*Tag) {
 	sort.Slice(tags, func(i, j int) bool {
 		return !tags[i].Date.Before(tags[j].Date)
 	})
+	// name sort
+	sort.Slice(tags, func(i, j int) bool {
+		return tags[i].Name > tags[j].Name
+	})
 }
